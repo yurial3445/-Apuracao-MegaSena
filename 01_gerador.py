@@ -1,25 +1,35 @@
 import csv
+import random
+import string
+import sys
 
-arquivo_entrada = "sorteios.csv"
-arquivo_saida = "sorteios_validos.csv"
+# Verifica se a quantidade de linhas foi informada
+if len(sys.argv) != 2:
+    print("Uso: python sorteios.py <quantidade_de_linhas>")
+    sys.exit(1)
 
-with open(arquivo_entrada, "r", newline="") as arquivo:
-    leitor = csv.reader(arquivo)
+# Converte o argumento para inteiro
+quantidade = int(sys.argv[1])
 
-    with open(arquivo_saida, "w", newline="") as arquivo_final:
-        escritor = csv.writer(arquivo_final)
+# Caracteres usados no identificador
+caracteres = string.ascii_uppercase + string.digits
 
-        for linha in leitor:
+# Cria o arquivo CSV
+with open("sorteios.csv", "w", newline="") as arquivo:
+    escritor = csv.writer(arquivo)
 
-            # A primeira posição é o ID
-            identificador = linha[0]
+    # Gera a quantidade exata de linhas informada
+    for i in range(quantidade):
+        # Sorteia 6 números entre 1 e 60, sem repetição
+        numeros = random.sample(range(1, 61), 6)
 
-            # Tudo depois do ID são os números
-            numeros = linha[1:]
+        # Cria um código com 6 caracteres
+        codigo = ''.join(random.choices(caracteres, k=6))
 
-            # Verifica se a quantidade de números está entre 6 e 15
-            if 6 <= len(numeros) <= 15:
-                escritor.writerow([identificador] + numeros)
+        # Cria o identificador
+        identificador = "AP-" + codigo
 
-print("Validação concluída!")
-print("Arquivo criado:", arquivo_saida)
+        # Grava a linha no CSV
+        escritor.writerow([identificador] + numeros)
+
+print(f"{quantidade} linhas geradas com sucesso!")
