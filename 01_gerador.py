@@ -1,17 +1,25 @@
 import csv
-import random
-import string
 
-caracteres = string.ascii_uppercase + string.digits
+arquivo_entrada = "sorteios.csv"
+arquivo_saida = "sorteios_validos.csv"
 
-with open("sorteios.csv", "w", newline="") as arquivo:
-    escritor = csv.writer(arquivo)
+with open(arquivo_entrada, "r", newline="") as arquivo:
+    leitor = csv.reader(arquivo)
 
-    for i in range(10):
-        numeros = random.sample(range(1, 61), 6)
+    with open(arquivo_saida, "w", newline="") as arquivo_final:
+        escritor = csv.writer(arquivo_final)
 
-        codigo = ''.join(random.choices(caracteres, k=6))
+        for linha in leitor:
 
-        identificador = "AP-" + codigo
+            # A primeira posição é o ID
+            identificador = linha[0]
 
-        escritor.writerow([identificador] + numeros)
+            # Tudo depois do ID são os números
+            numeros = linha[1:]
+
+            # Verifica se a quantidade de números está entre 6 e 15
+            if 6 <= len(numeros) <= 15:
+                escritor.writerow([identificador] + numeros)
+
+print("Validação concluída!")
+print("Arquivo criado:", arquivo_saida)
